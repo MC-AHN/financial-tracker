@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrasi Account</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Registrasi new Account</h1>
+        <div id="message"></div>
+        <form id="form">
+            <div>
+                <label for="username">Username: </label>
+                <input type="text" placeholder="Username" id="username" required>
+            </div>
+            <div>
+                <label for="password">Password</label>
+                <input type="password" placeholder="Password" id="password" required>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+        <p>Have an Account? <a href="../login/index.html">Login di sini</a></p>
+    </div>
+
+    <script>
+        const form = document.getElementById('form');
+        const message = document.getElementById('message');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username');
+            const password = document.getElementById('password');
+
+            message.textContent = '';
+            message.style.color = 'red';
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                })
+
+                const result = await response.json();
+
+                if (response.status === 201 && result.success) {
+                    message.style.color = 'green';
+                    message.innerHTML = 'Registrasi ** success ** please <a href="/login/">login</a>';
+                    form.reset()
+                } else {
+                    message.textContent = result.message || 'Failed Registrasi'
+                }
+            } catch (error) {message.textContent = `Failed in Network, please try again. </br> Error: ${error}`} 
+        })
+    </script>
+</body>
+</html>
