@@ -116,9 +116,7 @@ app.get('/api/transactions', authMiddleware, async (c) => {
     }
 })
 
-app.get('/', (c) => {
-    return c.html(`<h1>Financial Tracker API is Running</h1>`);
-})
+app.use('/*', serveStatic({ root: './public'}));
 
 const port = 8000;
 console.log(`🚀 Server is running on http://localhost:${port}`);
