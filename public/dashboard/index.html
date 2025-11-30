@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <header>
+    <h1>Halo, <span id="username" >User</span></h1>
+    <a href="../logout/index.html">Logout</a>
+  </header>
+
+  <main>
+    <h2>Ringkasan Bulan ini ( <span id="currentMonthYear"></span> )</h2>
+    <div id="summary">
+      <p>income   : <strong id="income">...</strong></p>
+      <p>Outcome  : <strong id="outcome">...</strong></p>
+      <h3>Balance : <strong id="balance">...</strong></h3>
+    </div>
+
+    <hr>
+
+    <h2>Input New Transaction</h2>
+    <div id="addMessage"></div>
+    <form id="addTransactionForm">
+      <label for="nominal">Nominal:</label>
+      <input type="number" name="nominal" id="nominal">
+      <br>
+      <label for="date">Date: </label>
+      <input type="date" name="date" id="date">
+      <br>
+      <label for="status">Status: </label>
+      <select name="status" id="status" required>
+        <option value="income">Income</option>
+        <option value="outcome">Outcome</option>
+      </select>
+      <br>
+      <label for="description">Description:</label>
+      <input type="text" name="description" id="description">
+      <br>
+      <button type="submit">Add Transaction</button>
+    </form>
+
+    <hr>
+
+    <h2>Riwayat Transcation</h2>
+    <ul id="transactionList">
+      <li>Loading Data...</li>
+    </ul>
+
+  </main>
+
+  <script>
+
+    const usernameSpan = document.getElementById('username');
+    const incomeEl = document.getElementById('income');
+    const outcomeEl = document.getElementById('outcome');
+    const balanceEl = document.getElementById('balance');
+    const currentMonthYear = document.getElementById('currentMonthYear');
+    const addTransactionForm = document.getElementById('addTransactionForm');
+    const transactionList = document.getElementById('transactionList');
+    const addMessageDiv = document.getElementById('addMessage');
+
+    const TODAY = new Date();
+    const CURRENT_YEAR = TODAY.getFullYear();
+    const CURRENT_MONTH = (TODAY.getMonth() + 1).toString().padStart(2, '0');
+
+    // Format nominal ke Rupiah
+    const formatRupiah = (number) => {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 2
+      }).format(number);
+    };
+
+    // 1. Periksa status login & dapatkan data pengguna
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/me');
+        if (!response.ok) {
+          window.location.href = '../login/';
+          return null;
+        }
+        const { success, data } = await response.json();
+        if (success) {
+          usernameSpan.textContent = data.username;
+          return data
+        } else {
+          window.location.href = '../login/';
+        }
+      } catch (error) {
+        window.location.href = '../login/'
+        return null;
+      }
+    };
+
+    // 2, Fungsi untuk mengambil dan menampilkan transaksi & summary
+    const fetchTransactions = async (year, month) => {
+      currentMonthYear.textContent = `${month}/${year}`;
+      transactionList.innerHTML = `<li>Memuat Data...</li>`;
+
+      try {
+        const response = await fetch(`/api/transactions?year=${year}&month=${month}`);
+        const { success, data, summary } = await response.json();
+
+        if (success) {
+          // Update Summary
+          incomeEl.textContent = formatRupiah(summary.totalIncome);
+          outcomeEl.textContent = formatRupiah(summary.totalOutcome);
+          balanceEl.textContent = formatRupiah(summary.balance);
+
+          // Update List
+          transactionList.innerHTML = '';
+          if (data.length === 0) {
+            transactionList.innerHTML = '<li>Belum ada transaksi di bulan ini.</li>';
+          }
+          data.forEach((t) => {
+            const li = document.createElement('li');
+            const nominalFormatted = formatRupiah(parseFloat(t.nominal));
+            const color = t.status === 'income' ? 'green' : 'red';
+
+            li.innerHTML = `**[${t.status.toUpperCase()}]** ${t.transactionDate}: <span style="color: ${color};">${nominalFormatted}</span> - ${t.description || '-'}`;
+            transactionList.appendChild(li);
+          });
+        } else {
+          transactionList.innerHTML = '<li>Gagal Memuat transaksi.</li>';
+        }
+      } catch (error) {
+        console.error('Failed get transaksi:', error);
+        transactionList.innerHTML = '<li>Error jaringan while loading data.</li>';
+      }
+    };
+
+    // 3. Event listener for add new transactions
+    addTransactionForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const nominal = document.getElementById('nominal').value;
+      const transactionDate = document.getElementById('date').value;
+      const status = document.getElementById('status').value;
+      const description = document.getElementById('description').value;
+
+      if (!nominal || !transactionDate || !status) return;
+
+      addMessageDiv.textContent = '';
+      addMessageDiv.style.color = 'red';
+
+      try {
+        const response = await fetch('/api/transactions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nominal: parseFloat(nominal), transactionDate, status, description }),
+        });
+        const { success, message } = await response.json();
+
+        if (response.status === 201 && success) {
+          addMessageDiv.style.color = 'green';
+          addMessageDiv.textContent = '✅ Transaction success added!';
+          addTransactionForm.reset();
+          fetchTransactions(CURRENT_YEAR, CURRENT_MONTH); // muat ulang daftar
+        } else {
+          addMessageDiv.textContent = message || 'Failed add transaction.';
+        }
+      } catch (error) {
+        console.error('Failed add transaction:', error);
+        addMessageDiv.textContent = 'Error jaringan while add transaction.';
+      }
+    });
+
+    // 
+    (async () => {
+      const user = await checkAuth();
+      if (user) {
+        fetchTransactions(CURRENT_YEAR, CURRENT_MONTH);
+      }
+    })();
+
+  </script>
+</body>
+</html>
