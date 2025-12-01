@@ -92,7 +92,7 @@ app.get('/api/transactions', authMiddleware, async (c) => {
         const startOfMonth = `${year}-${month.padStart(2, '0')}-01 00:00:00`;
         const endOfMonth = sql`'${sql.raw(startOfMonth)}'::timestamp + interval '1 Month'`;
 
-        const userTransactions = await db.query.transactions.findMany({
+        const userTransactions = await db.  query.transactions.findMany({
             where: (t, { eq, and, gte, lt }) => and(
                 eq(t.userId, user.id),
                 gte(t.transactionDate, startOfMonth),
