@@ -10,7 +10,9 @@ import { eq, desc, sql } from 'drizzle-orm';
 import { serveStatic } from '@hono/node-server/serve-static';
 
 const app = new Hono();
-const SECRET = process.env.JWT_SECRET
+const SECRET = process.env.JWT_SECRET;
+
+app.use('/*', serveStatic({ root: './public'}));
 
 app.post('/api/register', async (c) => {
     try {
@@ -116,7 +118,6 @@ app.get('/api/transactions', authMiddleware, async (c) => {
     }
 })
 
-app.use('/*', serveStatic({ root: './public'}));
 
 const port = 8000;
 console.log(`🚀 Server is running on http://localhost:${port}`);
