@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import bcrypt from 'bcryptjs';
-import { db } from './db/index.js';
-import { users } from './db/schema.js';
+import { db } from '../db/index.js';
+import { users } from '../db/schema.js';
 
 
 const register = async (c) => {

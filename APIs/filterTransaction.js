@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { db } from './db/index.js';
-import { transactions } from './db/schema.js';
+import { db } from '../db/index.js';
+import { transactions } from '../db/schema.js';
 import { desc, sql } from 'drizzle-orm';
 
 const filterTransaction = async (c) => {
