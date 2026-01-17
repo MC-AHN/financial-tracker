@@ -1,0 +1,154 @@
+const usernameSpan = document.getElementById('username');
+const incomeEl = document.getElementById('income');
+const outcomeEl = document.getElementById('outcome');
+const balanceEl = document.getElementById('balance');
+const currentMonthYear = document.getElementById('currentMonthYear');
+const addTransactionForm = document.getElementById('addTransactionForm');
+const transactionList = document.getElementById('transactionList');
+const addMessageDiv = document.getElementById('addMessage');
+
+
+const TODAY = new Date();
+const CURRENT_YEAR = TODAY.getFullYear();
+const CURRENT_MONTH = (TODAY.getMonth() + 1).toString().padStart(2, '0');
+
+const formatRupiah = (number) => {
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 2
+    }).format(number);
+};
+
+const checkAuth = async () => {
+    try {
+        const response = await fetch('/api/me');
+        if (!response.ok) {
+            window.location.href = '../login/';
+            return null;
+        }
+        const { success, data } = await response.json();
+        if (success) {
+            usernameSpan.textContent = data.username;
+            return data
+        } else {
+            window.location.href = '../login/';
+        }
+    } catch (error) {
+        window.location.href = '../login/'
+        return null;
+    }
+};
+
+const fetchTransactions = async (year, month) => {
+    currentMonthYear.textContent = `${month}/${year}`;
+    transactionList.innerHTML = `<li>Memuat Data...</li>`;
+
+    try {
+        const response = await fetch(`/api/transactions?year=${year}&month=${month}`);
+        const { success, data, summary } = await response.json();
+
+        if (success) {
+            incomeEl.textContent = formatRupiah(summary.totalIncome);
+            outcomeEl.textContent = formatRupiah(summary.totalOutcome);
+            balanceEl.textContent = formatRupiah(summary.balance);
+
+            transactionList.innerHTML = '';
+            if (data.length === 0) {
+                transactionList.innerHTML = '<li>Belum ada transaksi di bulan ini.</li>';
+            }
+            data.forEach((t) => {
+                const li = document.createElement('li');
+                const nominalFormatted = formatRupiah(parseFloat(t.nominal));
+                const color = t.status === 'income' ? 'green' : 'red';
+
+                li.innerHTML = `**[${t.status.toUpperCase()}]** ${t.transactionDate}: <span style="color: ${color};">${nominalFormatted}</span> - ${t.description || '-'}`;
+                transactionList.appendChild(li);
+            });
+        } else {
+            transactionList.innerHTML = '<li>Gagal Memuat transaksi.</li>';
+        }
+    } catch (error) {
+        console.error('Failed get transaksi:', error);
+        transactionList.innerHTML = '<li>Error jaringan while loading data.</li>';
+    }
+};
+
+addTransactionForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const nominal = document.getElementById('nominal').value;
+    const transactionDate = document.getElementById('date').value;
+    const status = document.getElementById('status').value;
+    const description = document.getElementById('description').value;
+
+    if (!nominal || !transactionDate || !status) return;
+
+    addMessageDiv.textContent = '';
+    addMessageDiv.style.color = 'red';
+
+    try {
+        const response = await fetch('/api/transactions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nominal: parseFloat(nominal), transactionDate, status, description }),
+            credentials: "include"
+        });
+        const { success, message } = await response.json();
+
+        if (response.status === 201 && success) {
+            addMessageDiv.style.color = 'green';
+            addMessageDiv.textContent = '✅ Transaction success added!';
+            addTransactionForm.reset();
+            fetchTransactions(CURRENT_YEAR, CURRENT_MONTH); // muat ulang daftar
+        } else {
+            addMessageDiv.textContent = message || 'Failed add transaction.', message;
+        }
+    } catch (error) {
+        console.error('Failed add transaction:', error);
+        addMessageDiv.textContent = 'Error jaringan while add transaction.';
+    }
+});
+
+// 
+(async () => {
+    const user = await checkAuth();
+    if (user) {
+        fetchTransactions(CURRENT_YEAR, CURRENT_MONTH);
+    }
+})();
+
+const filter = document.getElementById('filter')
+const inputFilter = document.getElementById('inputFilter');
+
+// filter
+filter.addEventListener("submit", (e) => {
+    e.preventDefault()
+
+    // ambil dan cek data
+    let data = inputFilter.value
+    if (!data) {
+        return console.log("Data Kosong")
+    }
+
+    // lihat data
+    console.log(data)
+
+    // pisahkan antara month dan year
+    data = data.split("-")
+
+    // lihat data bulan dan tahun
+    console.log('tahun', data[0])
+    console.log('bulan', data[1])
+
+    // jalankan filter data
+    fetchTransactions(data[0], data[1])
+})
+
+// Kembalikan ke normal
+document.getElementById('reset').addEventListener("click", (e) => {
+    e.preventDefault()
+
+    fetchTransactions(CURRENT_YEAR, CURRENT_MONTH)
+})
+
