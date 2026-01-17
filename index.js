@@ -10,6 +10,7 @@ import { serveStatic } from '@hono/node-server/serve-static';
 import register from './APIs/register.js';
 import login from './APIs/login.js';
 import logout from './APIs/logout.js';
+import addTransaction from './APIs/addTransaction.js';
 
 const app = new Hono();
 const SECRET = process.env.JWT_SECRET;
@@ -44,20 +45,7 @@ const authMiddleware = async (c, next) => {
     }
 }
 
-app.post('/api/transactions', authMiddleware, async (c) => {
-    try {
-        const user = c.get('user');
-        const { nominal, transactionDate, status, description } = await c.req.json()
-        const newTransaction = await db.insert(transactions).values({
-            userId: user.id,
-            nominal: nominal.toString(),
-            transactionDate: transactionDate,
-            status: status,
-            description: description
-        }).returning()
-        return c.json({ success: true, data: newTransaction[0] }, 201);
-    } catch (error) { return c.json({ success: false, message: 'Failed add transactions' }, 401) }
-})
+app.post('/api/transactions', authMiddleware, addTransaction)
 
 app.get('/api/transactions', authMiddleware, async (c) => {
     try {
