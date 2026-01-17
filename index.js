@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
-import { setCookie, getCookie } from 'hono/cookie';
+import { getCookie } from 'hono/cookie';
 import jwt from 'jsonwebtoken';
 import { db } from './db/index.js';
 import { transactions } from './db/schema.js';
@@ -9,6 +9,7 @@ import { desc, sql } from 'drizzle-orm';
 import { serveStatic } from '@hono/node-server/serve-static';
 import register from './APIs/register.js';
 import login from './APIs/login.js';
+import logout from './APIs/logout.js';
 
 const app = new Hono();
 const SECRET = process.env.JWT_SECRET;
@@ -19,10 +20,7 @@ app.post('/api/register', register)
 
 app.post('/api/login', login)
 
-app.post('/api/logout', (c) => {
-    setCookie(c, 'token', '', { maxAge: -1 });
-    return c.json({ success: true, message: 'Logout success' });
-});
+app.post('/api/logout', logout);
 
 app.get('/api/me', (c) => {
     const token = getCookie(c, 'token');

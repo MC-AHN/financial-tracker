@@ -1,0 +1,9 @@
+import 'dotenv/config';
+import { setCookie } from 'hono/cookie';
+
+const logout = (c) => {
+    setCookie(c, 'token', '', { maxAge: -1 });
+    return c.json({ success: true, message: 'Logout success' });
+}
+
+export default logout
