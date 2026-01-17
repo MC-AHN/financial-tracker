@@ -14,18 +14,7 @@ const SECRET = process.env.JWT_SECRET;
 
 app.use('/*', serveStatic({ root: './public'}));
 
-app.post('/api/register', async (c) => {
-    try {
-        const { username, password } = await c.req.json();
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await db.insert(users)
-            .values({ username, password: hashedPassword })
-            .returning({ id: users.id, username: users.username })
-        return c.json({ success: true, data: newUser[0] }, 201);
-    } catch (error) {
-        return c.json({ success: false, message: 'Failed Register', error: error }, 401)
-    }
-})
+app.post('/api/register', )
 
 app.post('/api/login', async (c) => {
     const { username, password } = await c.req.json();
