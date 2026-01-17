@@ -12,5 +12,5 @@ export const transactions = pgTable('transactions', {
     nominal: numeric('nominal', { precision: 15, scale: 2 }).notNull(),
     transactionDate: timestamp('transaction_date', { mode: 'string' }).notNull(),
     status: varchar('status', { length: 10, enum: ['income', 'outcome'] }).notNull(),
-    description: text( 'description' ),
+description: text( 'description' ),
 });

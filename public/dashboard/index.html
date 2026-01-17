@@ -44,6 +44,16 @@
 
     <hr>
 
+    <form id="filter">
+      <h2>Fliter</h2>
+      <label for="">By Month and Year</label>
+      <input type="month" id="inputFilter">
+      <button type="submit">Filter</button>
+      <button id="reset">Reset Filter</button>
+    </form>
+
+    <hr>
+
     <h2>Riwayat Transcation</h2>
     <ul id="transactionList">
       <li>Loading Data...</li>
@@ -62,11 +72,11 @@
     const transactionList = document.getElementById('transactionList');
     const addMessageDiv = document.getElementById('addMessage');
 
+    
     const TODAY = new Date();
     const CURRENT_YEAR = TODAY.getFullYear();
     const CURRENT_MONTH = (TODAY.getMonth() + 1).toString().padStart(2, '0');
-
-    // Format nominal ke Rupiah
+    
     const formatRupiah = (number) => {
       return new Intl.NumberFormat('id-ID', {
         style: 'currency',
@@ -75,7 +85,6 @@
       }).format(number);
     };
 
-    // 1. Periksa status login & dapatkan data pengguna
     const checkAuth = async () => {
       try {
         const response = await fetch('/api/me');
@@ -96,7 +105,6 @@
       }
     };
 
-    // 2, Fungsi untuk mengambil dan menampilkan transaksi & summary
     const fetchTransactions = async (year, month) => {
       currentMonthYear.textContent = `${month}/${year}`;
       transactionList.innerHTML = `<li>Memuat Data...</li>`;
@@ -106,12 +114,10 @@
         const { success, data, summary } = await response.json();
 
         if (success) {
-          // Update Summary
           incomeEl.textContent = formatRupiah(summary.totalIncome);
           outcomeEl.textContent = formatRupiah(summary.totalOutcome);
           balanceEl.textContent = formatRupiah(summary.balance);
 
-          // Update List
           transactionList.innerHTML = '';
           if (data.length === 0) {
             transactionList.innerHTML = '<li>Belum ada transaksi di bulan ini.</li>';
@@ -120,7 +126,7 @@
             const li = document.createElement('li');
             const nominalFormatted = formatRupiah(parseFloat(t.nominal));
             const color = t.status === 'income' ? 'green' : 'red';
-
+            
             li.innerHTML = `**[${t.status.toUpperCase()}]** ${t.transactionDate}: <span style="color: ${color};">${nominalFormatted}</span> - ${t.description || '-'}`;
             transactionList.appendChild(li);
           });
@@ -133,7 +139,6 @@
       }
     };
 
-    // 3. Event listener for add new transactions
     addTransactionForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -176,6 +181,40 @@
         fetchTransactions(CURRENT_YEAR, CURRENT_MONTH);
       }
     })();
+
+    const filter = document.getElementById('filter')
+    const inputFilter = document.getElementById('inputFilter');
+
+    // filter
+    filter.addEventListener("submit", (e) => {
+      e.preventDefault()
+
+      // ambil dan cek data
+      let data = inputFilter.value
+      if(!data) {
+        return console.log("Data Kosong")
+      }
+
+      // lihat data
+      console.log(data)
+      
+      // pisahkan antara month dan year
+      data = data.split("-")
+      
+      // lihat data bulan dan tahun
+      console.log('tahun', data[0])
+      console.log('bulan', data[1])
+
+      // jalankan filter data
+      fetchTransactions(data[0], data[1])
+    })
+
+    // Kembalikan ke normal
+    document.getElementById('reset').addEventListener("click", (e) => {
+      e.preventDefault()
+
+      fetchTransactions(CURRENT_YEAR, CURRENT_MONTH)
+    })
 
   </script>
 </body>
