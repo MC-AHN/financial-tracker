@@ -15,7 +15,7 @@ const login = async (c) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) return c.json({ success: false, message: 'Username or Password false' }, 401)
 
-    const token = jwt.sign({ id: user.id, username: user.username }, SECRET, { expiresIn: '1d' });
+    const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1d' });
     setCookie(c, 'token', token, { httpOnly: true, sameSite: 'lax', maxAge: 86400 });
 
     return c.json({ success: true, message: 'Login success' })

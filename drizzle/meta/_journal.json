@@ -8,6 +8,13 @@
       "when": 1768647618656,
       "tag": "0000_lumpy_lady_bullseye",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1768794726849,
+      "tag": "0001_next_photon",
+      "breakpoints": true
     }
   ]
 }

@@ -149,6 +149,8 @@ filter.addEventListener("submit", (e) => {
 document.getElementById('reset').addEventListener("click", (e) => {
     e.preventDefault()
 
+    inputFilter.value = ""
+
     fetchTransactions(CURRENT_YEAR, CURRENT_MONTH)
 })
 

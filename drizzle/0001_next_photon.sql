@@ -1,0 +1,1 @@
+ALTER TABLE "transactions_financial_tracker" ALTER COLUMN "nominal" SET DATA TYPE numeric;

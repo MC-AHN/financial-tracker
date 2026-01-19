@@ -9,7 +9,7 @@ export const users = pgTable('users_financial_tracker', {
 export const transactions = pgTable('transactions_financial_tracker', {
     id: serial('id').primaryKey(),
     userId: integer('user_id').references(() => users.id).notNull(),
-    nominal: numeric('nominal', { precision: 15, scale: 2 }).notNull(),
+    nominal: numeric('nominal').notNull(),
     transactionDate: timestamp('transaction_date', { mode: 'string' }).notNull(),
     status: varchar('status', { length: 10, enum: ['income', 'outcome'] }).notNull(),
 description: text( 'description' ),
