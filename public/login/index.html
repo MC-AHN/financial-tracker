@@ -1,27 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Login App Financial Tracker</h1>
-      <div id="message"></div>
-      <form action="" id="loginForm">
-        <input type="text" id="username" placeholder="Username" />
-        <br />
-        <input type="password" id="password" placeholder="Password" />
-        <br />
-        <button type="submit">Login</button>
-      </form>
-      <p>
-        Don't have an account?
-        <a href="../register/index.html">Register here</a>
-      </p>
-    </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Elite Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="logo-circle">💸</div>
+                <h1>Welcome Back</h1>
+                <p>Enter your details to access your dashboard</p>
+            </div>
 
-    <script type="module" src="./script.js"></script>    
-  </body>
+            <div id="message"></div>
+
+            <form id="loginForm" class="auth-form">
+                <div class="input-group">
+                    <label>USERNAME</label>
+                    <input type="text" id="username" placeholder="Enter your username" required>
+                </div>
+                <div class="input-group">
+                    <label>PASSWORD</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-auth">Sign In</button>
+            </form>
+
+            <p class="auth-footer">
+                Don't have an account? <a href="../register/index.html">Create one</a>
+            </p>
+        </div>
+    </div>
+    <script type="module" src="./script.js"></script>
+</body>
 </html>

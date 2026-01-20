@@ -10,6 +10,7 @@ import logout from './APIs/logout.js';
 import addTransaction from './APIs/addTransaction.js';
 import readTransaction from './APIs/readTransaction.js';
 import filterTransaction from './APIs/filterTransaction.js';
+import deleteTransaction from './APIs/deleteTransaction.js';
 
 const app = new Hono();
 const SECRET = process.env.JWT_SECRET;
@@ -48,7 +49,9 @@ app.post('/api/transactions', authMiddleware, addTransaction)
 
 app.get('/api/transactions', authMiddleware, readTransaction)
 
-app.get('/api/total', authMiddleware, filterTransaction)
+app.get('/api/total', authMiddleware, filterTransaction);
+
+app.delete('/api/transactions/:id', authMiddleware, deleteTransaction);
 
 
 

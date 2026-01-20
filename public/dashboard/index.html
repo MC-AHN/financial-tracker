@@ -1,66 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Finance Management</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header>
-    <h1>Halo, <span id="username" >User</span></h1>
-    <a href="../logout/index.html">Logout</a>
-  </header>
 
-  <main>
-    <h2>Ringkasan Bulan ini ( <span id="currentMonthYear"></span> )</h2>
-    <div id="summary">
-      <p>income   : <strong id="income">...</strong></p>
-      <p>Outcome  : <strong id="outcome">...</strong></p>
-      <h3>Balance : <strong id="balance">...</strong></h3>
+    <div class="container">
+        <header class="main-header">
+            <div class="user-profile">
+                <h1>Welcome back, <span id="username" class="highlight">User</span></h1>
+                <p class="date-display">Overview for <span id="currentMonthYear"></span></p>
+            </div>
+            <a href="../logout/index.html" class="logout-link">Sign Out</a>
+        </header>
+
+        <section class="summary-grid">
+            <div class="card card-white">
+                <small>Monthly Income</small>
+                <h2 id="income" class="text-green">...</h2>
+            </div>
+            <div class="card card-white">
+                <small>Monthly Outcome</small>
+                <h2 id="outcome" class="text-red">...</h2>
+            </div>
+            <div class="card card-dark">
+                <small>Total Balance</small>
+                <h2 id="balance" class="text-gold">...</h2>
+            </div>
+        </section>
+
+        <div class="main-layout">
+            <aside class="form-container card-white">
+                <h3 class="section-title">New Transaction</h3>
+                <div id="addMessage"></div>
+                <form id="addTransactionForm" class="luxury-form">
+                    <div class="input-group">
+                        <label>NOMINAL AMOUNT</label>
+                        <input type="number" id="nominal" placeholder="0" required>
+                    </div>
+                    <div class="input-group">
+                        <label>DATE</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <div class="input-group">
+                        <label>STATUS</label>
+                        <select id="status" required>
+                            <option value="income">Income</option>
+                            <option value="outcome">Outcome</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>DESCRIPTION</label>
+                        <input type="text" id="description" placeholder="Lunch, Project, etc.">
+                    </div>
+                    <button type="submit" class="btn-primary">Add to Ledger</button>
+                </form>
+            </aside>
+
+            <main class="history-container card-white">
+                <div class="history-header">
+                    <h3 class="section-title">Activity Logs</h3>
+                    <form id="filter" class="filter-pill">
+                        <input type="month" id="inputFilter">
+                        <button type="submit" class="btn-filter">Filter</button>
+                        <button id="reset" class="btn-reset">Reset</button>
+                    </form>
+                </div>
+                
+                <div id="transactionList" class="transaction-timeline">
+                    <div class="loading">Preparing your logs...</div>
+                </div>
+            </main>
+        </div>
     </div>
 
-    <hr>
-
-    <h2>Input New Transaction</h2>
-    <div id="addMessage"></div>
-    <form id="addTransactionForm">
-      <label for="nominal">Nominal:</label>
-      <input type="number" name="nominal" id="nominal">
-      <br>
-      <label for="date">Date: </label>
-      <input type="date" name="date" id="date">
-      <br>
-      <label for="status">Status: </label>
-      <select name="status" id="status" required>
-        <option value="income">Income</option>
-        <option value="outcome">Outcome</option>
-      </select>
-      <br>
-      <label for="description">Description:</label>
-      <input type="text" name="description" id="description">
-      <br>
-      <button type="submit">Add Transaction</button>
-    </form>
-
-    <hr>
-
-    <form id="filter">
-      <h2>Fliter</h2>
-      <label for="">By Month and Year</label>
-      <input type="month" id="inputFilter">
-      <button type="submit">Filter</button>
-      <button id="reset">Reset Filter</button>
-    </form>
-
-    <hr>
-
-    <h2>Riwayat Transcation</h2>
-    <ul id="transactionList">
-      <li>Loading Data...</li>
-    </ul>
-
-  </main>
-
-  <script type="module" src="./script.js"></script>
+    <script type="module" src="./script.js"></script>
 </body>
 </html>

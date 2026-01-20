@@ -3,26 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrasi Account</title>
+    <title>Register | Elite Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Registrasi new Account</h1>
-        <div id="message"></div>
-        <form id="form">
-            <div>
-                <label for="username">Username: </label>
-                <input type="text" placeholder="Username" id="username" required>
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="logo-circle">✨</div>
+                <h1>Join the Elite</h1>
+                <p>Start managing your wealth more professionally</p>
             </div>
-            <div>
-                <label for="password">Password</label>
-                <input type="password" placeholder="Password" id="password" required>
-            </div>
-            <button type="submit">Register</button>
-        </form>
-        <p>Have an Account? <a href="../login/index.html">Login di sini</a></p>
-    </div>
 
+            <div id="message"></div>
+
+            <form id="form" class="auth-form">
+                <div class="input-group">
+                    <label>CHOOSE USERNAME</label>
+                    <input type="text" id="username" placeholder="Username" required>
+                </div>
+                <div class="input-group">
+                    <label>SET PASSWORD</label>
+                    <input type="password" id="password" placeholder="Minimum 6 characters" required>
+                </div>
+                <button type="submit" class="btn-auth">Create Account</button>
+            </form>
+
+            <p class="auth-footer">
+                Already have an account? <a href="../login/index.html">Login here</a>
+            </p>
+        </div>
+    </div>
     <script type="module" src="./script.js"></script>
 </body>
 </html>
